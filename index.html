@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>猫扑 &amp; 我 · 小日子</title>
+<meta name="theme-color" content="#ff8fab" />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💗</text></svg>" />
+<link rel="stylesheet" href="style.css?v=20261101" />
+</head>
+<body>
+<div class="petals" aria-hidden="true">
+  <span>💗</span><span>🤍</span><span>🌸</span><span>💗</span><span>🌷</span><span>🤍</span><span>💗</span><span>🌸</span>
+</div>
+
+<header class="hero">
+  <div class="hero-inner">
+    <section class="couple-card">
+      <div class="couple-line">
+        <span class="name" id="nameMe">我</span>
+        <span class="heart-beat">❤</span>
+        <span class="name" id="nameHer">猫扑</span>
+      </div>
+      <p class="tagline" id="tagline">把我们的小日子，都收进这个粉粉的小站</p>
+      <div class="hero-row">
+        <div class="days-badge">我们已经在一起 <strong id="daysCount">—</strong> 天啦</div>
+        <button class="mini-ghost" id="metaBtn" type="button">名字 / 纪念日</button>
+        <button class="mini-ghost" id="cloudBtn" type="button">☁️ 云同步</button>
+      </div>
+      <p class="mode-badge" id="modeBadge" hidden></p>
+    </section>
+
+    <section class="stats">
+      <div class="stat">
+        <span class="stat-num" id="statTotal">0</span>
+        <span class="stat-label">条小日子</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num" id="statMonth">0</span>
+        <span class="stat-label">这个月新增</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num" id="statUpdate">—</span>
+        <span class="stat-label">最近更新</span>
+      </div>
+    </section>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="toolbar">
+    <div class="who">
+      <span>现在是我：</span>
+      <div class="who-switch" id="whoSwitch" role="group" aria-label="切换记录人">
+        <button type="button" data-author="me" class="active">我</button>
+        <button type="button" data-author="her">猫扑</button>
+      </div>
+    </div>
+    <div class="filters">
+      <label class="search-box">
+        <span aria-hidden="true">🔍</span>
+        <input id="searchInput" type="search" placeholder="搜索标题 / 正文 / 标签" />
+      </label>
+      <select id="monthFilter" aria-label="按月份筛选"><option value="">全部月份</option></select>
+      <select id="tagFilter" aria-label="按标签筛选"><option value="">全部标签</option></select>
+      <select id="authorFilter" aria-label="按记录人筛选">
+        <option value="">谁写的都看</option>
+        <option value="me">我写的</option>
+        <option value="her">猫扑写的</option>
+      </select>
+    </div>
+    <div class="tool-btns">
+      <button class="btn primary" id="newBtn" type="button">＋ 写一条</button>
+      <button class="btn ghost" id="exportBtn" type="button">导出备份</button>
+      <button class="btn ghost" id="importBtn" type="button">导入备份</button>
+      <input type="file" id="importInput" accept="application/json,.json" hidden />
+    </div>
+  </section>
+
+  <section class="grid" id="grid" aria-live="polite"></section>
+
+  <section class="empty" id="emptyState" hidden>
+    <div class="empty-emoji">🫧</div>
+    <h3>这里还空空的</h3>
+    <p>点右上角的「＋ 写一条」，把今天的小事记下来吧～</p>
+  </section>
+</main>
+
+<footer class="foot">
+  <span>© <span id="year">2025</span> 猫扑 &amp; 我 · 两个人的粉色小站</span>
+  <span class="foot-note">记得常用「导出备份」留一份数据哦 💾</span>
+</footer>
+
+<!-- 记录弹窗 -->
+<div class="modal-mask" id="recordModal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-head">
+      <h2 id="modalTitle">写一条小日子</h2>
+      <button class="icon-btn" type="button" data-close="recordModal" aria-label="关闭">✕</button>
+    </div>
+    <form id="recordForm" class="modal-body">
+      <input type="hidden" id="recordId" />
+      <div class="row two">
+        <label class="field">
+          <span>日期</span>
+          <input type="date" id="fieldDate" required />
+        </label>
+        <label class="field">
+          <span>这是谁写的小日子</span>
+          <select id="fieldAuthor">
+            <option value="me">我</option>
+            <option value="her">猫扑</option>
+          </select>
+        </label>
+      </div>
+      <label class="field">
+        <span>标题</span>
+        <input type="text" id="fieldTitle" maxlength="60" placeholder="例如：第一次一起看电影" required />
+      </label>
+      <label class="field">
+        <span>今天的小事</span>
+        <textarea id="fieldContent" rows="5" maxlength="4000" placeholder="写下此刻的心情、好玩的话、好吃的东西…"></textarea>
+      </label>
+      <div class="row three">
+        <label class="field">
+          <span>心情</span>
+          <select id="fieldMood">
+            <option value="">不选</option>
+            <option>甜甜</option>
+            <option>开心</option>
+            <option>心动</option>
+            <option>平静</option>
+            <option>想念</option>
+            <option>有点小别扭</option>
+            <option>元气满满</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>天气</span>
+          <select id="fieldWeather">
+            <option value="">不选</option>
+            <option>晴</option>
+            <option>多云</option>
+            <option>小雨</option>
+            <option>大雨</option>
+            <option>雪</option>
+            <option>有风</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>标签（逗号分隔）</span>
+          <input type="text" id="fieldTags" maxlength="80" placeholder="约会, 美食" />
+        </label>
+      </div>
+      <label class="field">
+        <span>配图（可选，最多 3 张）</span>
+        <input type="file" id="fieldImages" accept="image/*" multiple />
+      </label>
+      <div class="preview" id="imagePreview"></div>
+      <label class="check">
+        <input type="checkbox" id="fieldPinned" />
+        <span>把这天置顶，重要的日子要放在最上面</span>
+      </label>
+      <div class="modal-foot">
+        <button type="button" class="btn ghost danger" id="deleteBtn" hidden>删除这条</button>
+        <div class="spacer"></div>
+        <button type="button" class="btn ghost" data-close="recordModal">取消</button>
+        <button type="submit" class="btn primary">保存 💗</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- 设置弹窗 -->
+<div class="modal-mask" id="metaModal" hidden>
+  <div class="modal small" role="dialog" aria-modal="true" aria-labelledby="metaTitle">
+    <div class="modal-head">
+      <h2 id="metaTitle">我们的设置</h2>
+      <button class="icon-btn" type="button" data-close="metaModal" aria-label="关闭">✕</button>
+    </div>
+    <form id="metaForm" class="modal-body">
+      <div class="row two">
+        <label class="field">
+          <span>我这边叫什么</span>
+          <input type="text" id="metaMe" maxlength="16" placeholder="我" />
+        </label>
+        <label class="field">
+          <span>女朋友叫什么</span>
+          <input type="text" id="metaHer" maxlength="16" placeholder="猫扑" />
+        </label>
+      </div>
+      <label class="field">
+        <span>在一起的纪念日</span>
+        <input type="date" id="metaStart" />
+      </label>
+      <label class="field">
+        <span>顶部的小句子</span>
+        <input type="text" id="metaTagline" maxlength="60" />
+      </label>
+      <div class="modal-foot">
+        <div class="spacer"></div>
+        <button type="button" class="btn ghost" data-close="metaModal">取消</button>
+        <button type="submit" class="btn primary">保存</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- 云同步设置弹窗 -->
+<div class="modal-mask" id="cloudModal" hidden>
+  <div class="modal small" role="dialog" aria-modal="true" aria-labelledby="cloudTitle">
+    <div class="modal-head">
+      <h2 id="cloudTitle">云同步设置</h2>
+      <button class="icon-btn" type="button" data-close="cloudModal" aria-label="关闭">✕</button>
+    </div>
+    <form id="cloudForm" class="modal-body">
+      <p class="cloud-note">填一次就好。Gist 编号和令牌只保存在当前浏览器里，不会写进网站代码；换手机时用「复制手机连接」把链接发过去即可。</p>
+      <label class="field">
+        <span>Gist 编号</span>
+        <input type="text" id="cloudGist" autocomplete="off" placeholder="例如 c1af7d157317edbdb5c1308f3ce77c27" />
+      </label>
+      <label class="field">
+        <span>GitHub 令牌（只需要 gist 权限）</span>
+        <textarea id="cloudToken" rows="3" autocomplete="off" placeholder="ghp_..."></textarea>
+      </label>
+      <p class="cloud-status" id="cloudStatus">未连接</p>
+      <div class="modal-foot">
+        <button type="button" class="btn ghost danger" id="cloudDisconnect" hidden>断开云同步</button>
+        <div class="spacer"></div>
+        <button type="button" class="btn ghost" data-close="cloudModal">取消</button>
+        <button type="submit" class="btn primary">连接并同步</button>
+      </div>
+      <button type="button" class="btn ghost" id="cloudShare" style="margin-top:10px" hidden>复制手机连接</button>
+    </form>
+  </div>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script src="app.js?v=20261101"></script>
+</body>
+</html>
